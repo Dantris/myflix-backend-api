@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation</title>
+</head>
+<body>
+    <h1>REST API Documentation</h1>
+
+    <p>This application provides access to information about different movies, directors, and genres. Users can sign up, update their personal information, and create a list of their favorite movies.</p>
+
+    <h2>Endpoints</h2>
+
+    <table>
+        <tr>
+            <th>Operation</th>
+            <th>Request</th>
+            <th>URL</th>
+            <th>Response</th>
+            <th>Query Parameters</th>
+            <th>Request Body</th>
+        </tr>
+        <tr>
+            <td>Get all movies</td>
+            <td>GET</td>
+            <td>/movies</td>
+            <td>JSON array</td>
+            <td>None</td>
+            <td>N/A</td>
+        </tr>
+        <tr>
+            <td>Get a single movie</td>
+            <td>GET</td>
+            <td>/movies/:title</td>
+            <td>JSON object</td>
+            <td>:title</td>
+            <td>N/A</td>
+        </tr>
+        <tr>
+            <td>User Registration</td>
+            <td>POST</td>
+            <td>/users/register</td>
+            <td>JSON object</td>
+            <td>N/A</td>
+            <td>User data JSON</td>
+        </tr>
+        <tr>
+            <td>Update user info</td>
+            <td>PUT</td>
+            <td>/users/:userId</td>
+            <td>JSON object</td>
+            <td>:userId</td>
+            <td>User data JSON</td>
+        </tr>
+        <tr>
+            <td>Add movie to favorites</td>
+            <td>POST</td>
+            <td>/users/:userId/favorites</td>
+            <td>Text confirmation</td>
+            <td>:userId</td>
+            <td>Movie ID JSON</td>
+        </tr>
+        <tr>
+            <td>Remove movie from favorites</td>
+            <td>DELETE</td>
+            <td>/users/:userId/favorites/:movieId</td>
+            <td>Text confirmation</td>
+            <td>:userId, :movieId</td>
+            <td>N/A</td>
+        </tr>
+        <tr>
+            <td>User deregistration</td>
+            <td>DELETE</td>
+            <td>/users/:userId</td>
+            <td>Text confirmation</td>
+            <td>:userId</td>
+            <td>N/A</td>
+        </tr>
+    </table>
+
+</body>
+</html>
