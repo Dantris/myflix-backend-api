@@ -4,39 +4,29 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const Models = require("./models.js");
 const { check, validationResult } = require("express-validator");
+const express = require("express");
 const cors = require("cors");
-// List of allowed origins
-// const allowedOrigins = [
-//   "https://https://myflixv1-deebdbd0b5ba.herokuapp.com",
-//   "http://localhost:1234",
-// ];
+const app = express();
 
-const cors = require("cors");
-app.use(
-  cors({
-    origin: "*", // use your actual domain name (or localhost), using * is not recommended
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
-    allowedHeaders: [
-      "Content-Type",
-      "Origin",
-      "X-Requested-With",
-      "Accept",
-      "x-client-key",
-      "x-client-token",
-      "x-client-secret",
-      "Authorization",
-    ],
-    credentials: true,
-  })
-);
+// Define CORS options
+const corsOptions = {
+  origin: "*", // Ideally, replace '*' with your actual front-end URL for security
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Origin",
+    "X-Requested-With",
+    "Accept",
+    "Authorization",
+  ],
+  credentials: true,
+};
 
 // Apply CORS middleware with the options
 app.use(cors(corsOptions));
 
 const Movies = Models.Movie;
 const Users = Models.User;
-
-const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
