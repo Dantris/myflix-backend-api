@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const Models = require("./models.js");
 const { check, validationResult } = require("express-validator");
 const cors = require("cors");
-const passport = require("passport");
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -18,8 +17,8 @@ app.use(morgan("combined"));
 app.use(express.static("public"));
 
 let allowedOrigins = [
-  "http://localhost:1234",
-  "https://myflixv1-deebdbd0b5ba.herokuapp.com",
+  "http://localhost:1234", // Your local development server
+  "https://myflixv1-deebdbd0b5ba.herokuapp.com", // Your deployed frontend URL (if you have one)
 ];
 
 app.use(
@@ -32,12 +31,24 @@ app.use(
       }
       return callback(null, true);
     },
-    credentials: true,
   })
 );
 
 let auth = require("./auth")(app);
+const passport = require("passport");
 require("./passport");
+
+// mongoose
+//   .connect("mongodb://localhost:27017/myflixv1", {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => {
+//     console.log("Connected to the database");
+//   })
+//   .catch((err) => {
+//     console.error("Database connection error:", err);
+//   });
 
 mongoose.connect(process.env.CONNECTION_URI, {
   useNewUrlParser: true,
@@ -194,16 +205,18 @@ app.post(
     check("email", "email does not appear to be valid").isEmail(),
   ],
   async (req, res) => {
+    // check the validation object for errors
     let errors = validationResult(req);
 
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
     }
 
-    let hashedPassword = await Users.hashPassword(req.body.password);
-    await Users.findOne({ username: req.body.username })
+    let hashedPassword = await Users.hashPassword(req.body.password); // Use await here
+    await Users.findOne({ username: req.body.username }) // Search to see if a user with the requested username already exists
       .then((user) => {
         if (user) {
+          //If the user is found, send a response that it already exists
           return res.status(400).send(req.body.username + " already exists");
         } else {
           Users.create({
@@ -253,9 +266,11 @@ app.put(
   "/users/:username",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
+    // CONDITION TO CHECK ADDED HERE
     if (req.user.username !== req.params.username) {
       return res.status(400).send("Permission denied");
     }
+    // CONDITION ENDS
     let hashedPassword = await Users.hashPassword(req.body.password);
     await Users.findOneAndUpdate(
       { username: req.params.username },
@@ -268,7 +283,7 @@ app.put(
         },
       },
       { new: true }
-    )
+    ) // This line makes sure that the updated document is returned
       .then((updatedUser) => {
         res.json(updatedUser);
       })
@@ -317,6 +332,11 @@ app.delete(
       });
   }
 );
+
+// Other endpoints
+app.get("/search", (req, res) => {
+  res.send("Perform a search");
+});
 
 const port = process.env.PORT || 8080;
 app.listen(port, "0.0.0.0", () => {
