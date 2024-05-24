@@ -16,10 +16,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("combined"));
 app.use(express.static("public"));
 
-let allowedOrigins = [
-  "http://localhost:1234", // Your local development server
-  "https://myflixv1-deebdbd0b5ba.herokuapp.com", // Your deployed frontend URL (if you have one)
-];
+// let allowedOrigins = [
+// "http://localhost:1234", // Your local development server
+// "https://myflixv1-deebdbd0b5ba.herokuapp.com", // Your deployed frontend URL (if you have one)
+// ];
+app.use(cors());
 
 app.use(
   cors({
