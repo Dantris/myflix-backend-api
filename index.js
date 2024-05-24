@@ -20,7 +20,17 @@ app.use(express.static("public"));
 // "http://localhost:1234", // Your local development server
 // "https://myflixv1-deebdbd0b5ba.herokuapp.com", // Your deployed frontend URL (if you have one)
 // ];
-app.use(cors());
+// Define CORS options
+const corsOptions = {
+  origin: "https://example.com", // Specific origin
+  optionsSuccessStatus: 200, // For legacy browsers
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allowed methods
+  allowedHeaders: "Content-Type,Authorization", // Allowed headers
+  credentials: true, // Allow credentials
+};
+
+// Apply CORS with your options
+app.use(cors(corsOptions));
 
 app.use(
   cors({
