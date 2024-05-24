@@ -4,9 +4,16 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const Models = require("./models.js");
 const { check, validationResult } = require("express-validator");
-const express = require("express");
 const cors = require("cors");
 const app = express();
+
+const Movies = Models.Movie;
+const Users = Models.User;
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan("combined"));
+app.use(express.static("public"));
 
 // Define CORS options
 const corsOptions = {
@@ -24,14 +31,6 @@ const corsOptions = {
 
 // Apply CORS middleware with the options
 app.use(cors(corsOptions));
-
-const Movies = Models.Movie;
-const Users = Models.User;
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(morgan("combined"));
-app.use(express.static("public"));
 
 // let allowedOrigins = [
 // "http://localhost:1234", // Your local development server
