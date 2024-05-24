@@ -15,9 +15,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("combined"));
 app.use(express.static("public"));
 
-// Define CORS options
 const corsOptions = {
-  origin: "*", // Ideally, replace '*' with your actual front-end URL for security
+  origin: [
+    "http://localhost:1234",
+    "https://myflixv1-deebdbd0b5ba.herokuapp.com",
+  ], // Add your domains
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
   allowedHeaders: [
     "Content-Type",
