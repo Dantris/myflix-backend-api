@@ -5,6 +5,29 @@ const mongoose = require("mongoose");
 const Models = require("./models.js");
 const { check, validationResult } = require("express-validator");
 const cors = require("cors");
+// List of allowed origins
+const allowedOrigins = [
+  "https://https://myflixv1-deebdbd0b5ba.herokuapp.com",
+  "http://localhost:1234",
+];
+
+// CORS options
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  optionsSuccessStatus: 200,
+  methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
+  allowedHeaders: "Content-Type,Authorization",
+  credentials: true,
+};
+
+// Apply CORS middleware with the options
+app.use(cors(corsOptions));
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -21,16 +44,6 @@ app.use(express.static("public"));
 // "https://myflixv1-deebdbd0b5ba.herokuapp.com", // Your deployed frontend URL (if you have one)
 // ];
 // Define CORS options
-const corsOptions = {
-  origin: "https://example.com", // Specific origin
-  optionsSuccessStatus: 200, // For legacy browsers
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allowed methods
-  allowedHeaders: "Content-Type,Authorization", // Allowed headers
-  credentials: true, // Allow credentials
-};
-
-// Apply CORS with your options
-app.use(cors(corsOptions));
 
 app.use(
   cors({
