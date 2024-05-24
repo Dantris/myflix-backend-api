@@ -50,10 +50,10 @@ mongoose
     console.error("Database connection error:", err);
   });
 
-// mongoose.connect(process.env.CONNECTION_URI, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
+mongoose.connect(process.env.CONNECTION_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
