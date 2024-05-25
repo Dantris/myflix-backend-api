@@ -19,17 +19,13 @@ const corsOptions = {
   origin: [
     "http://localhost:1234",
     "https://myflixv1-deebdbd0b5ba.herokuapp.com",
-  ], // Add your domains
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
-  allowedHeaders: [
-    "Content-Type",
-    "Origin",
-    "X-Requested-With",
-    "Accept",
-    "Authorization",
   ],
+  methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
+
+app.use(cors(corsOptions));
 
 // Apply CORS middleware with the options
 app.use(cors(corsOptions));
