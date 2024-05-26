@@ -10,13 +10,13 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-const Movies = Models.Movie;
-const Users = Models.User;
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("combined"));
 app.use(express.static("public"));
+
+const Movies = Models.Movie;
+const Users = Models.User;
 
 const corsOptions = {
   origin: [
@@ -56,7 +56,7 @@ mongoose.connect(process.env.CONNECTION_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
+console.log(CONNECTION_URI);
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`, req.body);
   next();
