@@ -1,3 +1,4 @@
+const dotenv = require("dotenv");
 const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
@@ -6,7 +7,6 @@ const Models = require("./models.js");
 const { check, validationResult } = require("express-validator");
 const cors = require("cors");
 const app = express();
-const dotenv = require("dotenv");
 
 dotenv.config();
 
@@ -56,7 +56,7 @@ mongoose.connect(process.env.CONNECTION_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-console.log(CONNECTION_URI);
+console.log("CONNECTION_URI:", process.env.CONNECTION_URI);
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`, req.body);
   next();
