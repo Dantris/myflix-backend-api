@@ -6,7 +6,7 @@ const Models = require("./models.js");
 const { check, validationResult } = require("express-validator");
 const cors = require("cors");
 const app = express();
-
+console.stack("Here I am");
 const Movies = Models.Movie;
 const Users = Models.User;
 
@@ -18,7 +18,7 @@ app.use(express.static("public"));
 const corsOptions = {
   origin: [
     "http://localhost:1234",
-    "https://myflixv1-deebdbd0b5ba.herokuapp.com",
+    "https://myflixv1-deebdbd0b5ba.herokuapp.com/",
   ],
   methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -193,7 +193,7 @@ app.get(
       });
   }
 );
-
+console.stack("Here I am");
 // User CRUD POST/CREATE
 app.post(
   "/users",
@@ -345,3 +345,5 @@ const port = process.env.PORT || 8080;
 app.listen(port, "0.0.0.0", () => {
   console.log("Listening on Port " + port);
 });
+
+console.stack("Here I am");
