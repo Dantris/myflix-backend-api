@@ -198,11 +198,13 @@ app.get(
 app.post(
   "/users",
   [
-    [
-      body("name").notEmpty(),
-      body("email").isEmail(),
-      body("password").notEmpty(),
-    ],
+    check("username", "username is required").isLength({ min: 5 }),
+    check(
+      "username",
+      "username contains non alphanumeric characters - not allowed."
+    ).isAlphanumeric(),
+    check("password", "password is required").not().isEmpty(),
+    check("email", "email does not appear to be valid").isEmail(),
   ],
   async (req, res) => {
     console.log(req.body);
