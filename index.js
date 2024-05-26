@@ -6,6 +6,9 @@ const Models = require("./models.js");
 const { check, validationResult } = require("express-validator");
 const cors = require("cors");
 const app = express();
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 const Movies = Models.Movie;
 const Users = Models.User;
