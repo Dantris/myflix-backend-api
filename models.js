@@ -6,17 +6,8 @@ let movieSchema = new Schema({
   title: { type: String, required: true },
   year: { type: Number, required: true },
   description: { type: String, required: true },
-  genre: [
-    {
-      name: { type: String, required: true },
-      description: { type: String, required: true },
-    },
-  ],
-  director: {
-    name: { type: String },
-    birthYear: { type: Number },
-    bio: { type: String },
-  },
+  genre: { type: String, required: true },
+  director: { type: String, required: true },
   actors: [String],
   image: { type: String, default: "default.jpg" },
   featured: { type: Boolean, default: false },
