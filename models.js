@@ -8,7 +8,6 @@ let movieSchema = new Schema({
   description: { type: String, required: true },
   genre: { type: String, required: true },
   director: { type: String, required: true },
-  actors: [String],
   image: { type: String, default: "default.jpg" },
   featured: { type: Boolean, default: false },
 });

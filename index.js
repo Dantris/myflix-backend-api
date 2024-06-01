@@ -84,6 +84,25 @@ app.get(
   }
 );
 
+// Get a single movie by ID (GET) READ
+app.get(
+  "/movies/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    await Movies.findById(req.params.id)
+      .then((movie) => {
+        if (!movie) {
+          return res.status(404).send("Movie not found.");
+        }
+        res.json(movie);
+      })
+      .catch((error) => {
+        console.error("Error fetching movie by ID:", error);
+        res.status(500).send("Error: " + error);
+      });
+  }
+);
+
 // Get a movie by title (GET) READ
 app.get(
   "/movies/:title",
