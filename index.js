@@ -180,6 +180,7 @@ app.get(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     await Users.findOne({ username: req.params.username })
+      .populate("favoriteMovies") // Make sure to populate this if it's not added
       .then((user) => {
         if (!user) {
           return res.status(404).send(req.params.username + " was not found.");
