@@ -193,19 +193,16 @@ app.get(
   }
 );
 
-// Get a user's list of favorite movies (GET) READ
-app.get(
-  "/users/:username/favorites",
+app.post(
+  "/users/:username/movies/:movieId",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    await Users.findOne({ username: req.params.username })
-      .populate("favoriteMovies")
-      .then((user) => {
-        if (!user) {
-          return res.status(404).send(req.params.username + " was not found.");
-        }
-        res.json(user.favoriteMovies);
-      })
+    await Users.findOneAndUpdate(
+      { username: req.params.username },
+      { $addToSet: { favoriteMovies: req.params.movieId } },
+      { new: true }
+    )
+      .then((updatedUser) => res.json(updatedUser))
       .catch((error) => {
         console.error(error);
         res.status(500).send("Error: " + error);
@@ -268,11 +265,21 @@ app.post(
   "/users/:username/movies/:movieId",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    await Users.findOneAndUpdate(
+    const movie = await Movies.findById(req.params.movieId);
+    if (!movie) {
+      return res.status(404).send("Movie not found.");
+    }
+
+    // Verifying the user is the one making the request
+    if (req.user.username !== req.params.username) {
+      return res
+        .status(403)
+        .send("Unauthorized to modify another user's favorites");
+    }
+
+    Users.findOneAndUpdate(
       { username: req.params.username },
-      {
-        $addToSet: { favoriteMovies: req.params.movieId },
-      },
+      { $addToSet: { favoriteMovies: req.params.movieId } },
       { new: true }
     )
       .then((updatedUser) => res.json(updatedUser))
