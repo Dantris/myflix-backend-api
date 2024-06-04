@@ -193,23 +193,6 @@ app.get(
   }
 );
 
-app.post(
-  "/users/:username/movies/:movieId",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    await Users.findOneAndUpdate(
-      { username: req.params.username },
-      { $addToSet: { favoriteMovies: req.params.movieId } },
-      { new: true }
-    )
-      .then((updatedUser) => res.json(updatedUser))
-      .catch((error) => {
-        console.error(error);
-        res.status(500).send("Error: " + error);
-      });
-  }
-);
-
 // User CRUD POST/CREATE
 app.post(
   "/users",
