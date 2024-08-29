@@ -275,36 +275,52 @@ app.post(
   }
 );
 
-// Update a users info by username (PUT) UPDATE
 app.put(
   "/users/:username",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    // CONDITION TO CHECK ADDED HERE
-    if (req.user.username !== req.params.username) {
-      return res.status(400).send("Permission denied");
-    }
-    // CONDITION ENDS
-    let hashedPassword = await Users.hashPassword(req.body.password);
-    await Users.findOneAndUpdate(
-      { username: req.params.username },
-      {
-        $set: {
+    try {
+      // Check if the user is trying to change to an already existing username
+      if (req.body.username && req.body.username !== req.params.username) {
+        const existingUser = await Users.findOne({
           username: req.body.username,
-          password: hashedPassword,
-          email: req.body.email,
-          birthday: req.body.birthday,
-        },
-      },
-      { new: true }
-    ) // This line makes sure that the updated document is returned
-      .then((updatedUser) => {
-        res.json(updatedUser);
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).send("Error: " + err);
-      });
+        });
+        if (existingUser) {
+          return res
+            .status(400)
+            .send("Username already exists. Please choose another one.");
+        }
+      }
+
+      // Prepare the data to be updated
+      let updateData = {
+        username: req.body.username || req.params.username, // Keep the old username if a new one isn't provided
+        email: req.body.email,
+        birthday: req.body.birthday,
+      };
+
+      // If a new password is provided, hash it before saving
+      if (req.body.password) {
+        updateData.password = await Users.hashPassword(req.body.password);
+      }
+
+      // Update the user in the database
+      const updatedUser = await Users.findOneAndUpdate(
+        { username: req.params.username },
+        { $set: updateData },
+        { new: true }
+      );
+
+      if (!updatedUser) {
+        return res.status(404).send("User not found.");
+      }
+
+      // Respond with the updated user data
+      res.json(updatedUser);
+    } catch (err) {
+      console.error("Error updating user:", err);
+      res.status(500).send("Error: " + err);
+    }
   }
 );
 
