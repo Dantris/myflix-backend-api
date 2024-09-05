@@ -23,7 +23,7 @@ const corsOptions = {
     "http://localhost:1234",
     "https://myflixv1-deebdbd0b5ba.herokuapp.com",
     "https://flourishing-sopapillas-8c4f40.netlify.app",
-    "http://localhost:60972", // Only allow requests from this frontend
+    "http://localhost:4200",
   ],
   methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
