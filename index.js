@@ -200,48 +200,42 @@ app.get(
 app.post(
   "/users",
   [
-    check("username", "username is required").isLength({ min: 5 }),
-    check(
-      "username",
-      "username contains non alphanumeric characters - not allowed."
-    ).isAlphanumeric(),
-    check("password", "password is required").not().isEmpty(),
-    check("email", "email does not appear to be valid").isEmail(),
+    check("username", "username is required").isLength({ min: 5 }), // Username should be at least 5 chars
+    check("password", "password is required").not().isEmpty(), // Password cannot be empty
+    check("email", "email does not appear to be valid").isEmail(), // Check if email format is valid
   ],
   async (req, res) => {
-    console.log(req.body);
-    // check the validation object for errors
-    let errors = validationResult(req);
-
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
     }
 
-    let hashedPassword = await Users.hashPassword(req.body.password); // Use await here
-    await Users.findOne({ username: req.body.username }) // Search to see if a user with the requested username already exists
-      .then((user) => {
-        if (user) {
-          //If the user is found, send a response that it already exists
-          return res.status(400).send(req.body.username + " already exists");
-        } else {
-          Users.create({
-            username: req.body.username,
-            password: hashedPassword,
-            email: req.body.email,
-            birthday: req.body.birthday,
-          })
-            .then((user) => {
-              res.status(201).json(user);
-            })
-            .catch((error) => {
-              console.error(error);
-              res.status(500).send("Error: " + error);
-            });
+    // Hash the password
+    let hashedPassword = await Users.hashPassword(req.body.password);
+
+    // Check if the user already exists
+    Users.findOne({ username: req.body.username })
+      .then((existingUser) => {
+        if (existingUser) {
+          return res.status(400).send("Username already exists");
         }
+
+        // Create the user
+        Users.create({
+          username: req.body.username,
+          password: hashedPassword,
+          email: req.body.email,
+          birthday: req.body.birthday,
+        })
+          .then((newUser) => {
+            res.status(201).json(newUser);
+          })
+          .catch((error) => {
+            res.status(500).json({ error: "User registration failed" });
+          });
       })
       .catch((error) => {
-        console.error(error);
-        res.status(500).send("Error: " + error);
+        res.status(500).json({ error: "Internal server error" });
       });
   }
 );
