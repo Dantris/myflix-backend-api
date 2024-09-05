@@ -197,57 +197,52 @@ app.get(
 );
 
 // User CRUD POST/CREATE
-// User registration route with improved error logging
 app.post(
   "/users",
   [
     check("username", "username is required").isLength({ min: 5 }),
     check(
       "username",
-      "username contains non-alphanumeric characters - not allowed."
+      "username contains non alphanumeric characters - not allowed."
     ).isAlphanumeric(),
     check("password", "password is required").not().isEmpty(),
     check("email", "email does not appear to be valid").isEmail(),
   ],
   async (req, res) => {
-    // Log the request body for debugging
-    console.log("User registration request body:", req.body);
+    console.log(req.body);
+    // check the validation object for errors
+    let errors = validationResult(req);
 
-    // Check for validation errors
-    const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log("Validation errors:", errors.array()); // Log validation errors
       return res.status(422).json({ errors: errors.array() });
     }
 
-    try {
-      // Check if a user with the same username or email already exists
-      const existingUser = await Users.findOne({
-        $or: [{ username: req.body.username }, { email: req.body.email }],
+    let hashedPassword = await Users.hashPassword(req.body.password); // Use await here
+    await Users.findOne({ username: req.body.username }) // Search to see if a user with the requested username already exists
+      .then((user) => {
+        if (user) {
+          //If the user is found, send a response that it already exists
+          return res.status(400).send(req.body.username + " already exists");
+        } else {
+          Users.create({
+            username: req.body.username,
+            password: hashedPassword,
+            email: req.body.email,
+            birthday: req.body.birthday,
+          })
+            .then((user) => {
+              res.status(201).json(user);
+            })
+            .catch((error) => {
+              console.error(error);
+              res.status(500).send("Error: " + error);
+            });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send("Error: " + error);
       });
-
-      if (existingUser) {
-        console.log(`User already exists:`, existingUser); // Log the existing user
-        return res.status(400).send("Username or email already exists.");
-      }
-
-      // Hash the password
-      const hashedPassword = await Users.hashPassword(req.body.password);
-
-      // Create the new user
-      const newUser = await Users.create({
-        username: req.body.username,
-        password: hashedPassword,
-        email: req.body.email,
-        birthday: req.body.birthday,
-      });
-
-      console.log("New user created:", newUser); // Log successful user creation
-      return res.status(201).json(newUser);
-    } catch (error) {
-      console.error("Error during user registration:", error); // Log any unexpected errors
-      return res.status(500).send("Error: " + error);
-    }
   }
 );
 
